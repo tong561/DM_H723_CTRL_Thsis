@@ -28,6 +28,7 @@
 #include "bsp_fdcan.h"
 #include "dm_motor_ctrl.h"
 #include "stdio.h"
+#include "3RRS.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -132,40 +133,15 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+	double theta_out[3];
   while (1)
   {
-    for (int i = 0; i < 30; i++)
-    {
-      pos_ctrl(&hfdcan1, motor[0].id, (float)  1*((float)i/30),30/i+10);
-      pos_ctrl(&hfdcan1, motor[1].id, (float)0.5*((float)i/30),30/i+10);
-      pos_ctrl(&hfdcan1, motor[2].id, (float)0.1*((float)i/30),30/i+10);
+		for (int i=0;i<15;i++)
+		{
+			ik_3rrs_no_yaw(0.0866,i,0,NULL,theta_out);
 			
-      printf("%f,%f,%f\r\n", motor[0].para.pos, motor[Motor2].para.pos, motor[Motor3].para.pos);
-    }
-		for (int i = 0; i < 500; i++)
-    {
-      pos_ctrl(&hfdcan1, motor[0].id, 1,   30);
-      pos_ctrl(&hfdcan1, motor[1].id, 0.5, 30);
-      pos_ctrl(&hfdcan1, motor[2].id, 0.1, 30);
-			HAL_Delay(2);
-      printf("%f,%f,%f\r\n", motor[0].para.pos, motor[Motor2].para.pos, motor[Motor3].para.pos);
-    }
-    for (int i = 0; i < 30; i++)
-    {
-      pos_ctrl(&hfdcan1, motor[Motor1].id, (float)	 1-1  *((float)i/30),  30/i+10);
-      pos_ctrl(&hfdcan1, motor[Motor2].id, (float)0.5-0.5*((float)i/ 30),  30/i+10);
-      pos_ctrl(&hfdcan1, motor[Motor3].id, (float)0.1-0.1*((float)i/ 30),  30/i+10);
-      
-      printf("%f,%f,%f\r\n", motor[Motor1].para.pos, motor[Motor2].para.pos, motor[Motor3].para.pos);
-    }
-		for (int i = 0; i < 500; i++)
-    {
-      pos_ctrl(&hfdcan1, motor[0].id, 0, 30);
-      pos_ctrl(&hfdcan1, motor[1].id, 0, 30);
-      pos_ctrl(&hfdcan1, motor[2].id, 0, 30);
-      HAL_Delay(2);
-      printf("%f,%f,%f\r\n", motor[0].para.pos, motor[Motor2].para.pos, motor[Motor3].para.pos);
-    }
+			printf("%2f,%2f,%2f\r\n",theta_out[0],theta_out[1],theta_out[2]);
+		}
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
