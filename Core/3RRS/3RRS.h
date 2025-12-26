@@ -8,5 +8,3 @@ unsigned char  ik_3rrs_no_yaw(double H, double X_roll, double Y_pitch,
 
 										
 #endif
-										
-										

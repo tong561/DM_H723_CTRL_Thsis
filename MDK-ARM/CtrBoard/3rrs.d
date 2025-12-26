@@ -1,8 +1,8 @@
-ctrboard\3rrs.o: 3RRS\3RRS.c
+ctrboard\3rrs.o: ..\Core\3RRS\3RRS.c
 ctrboard\3rrs.o: G:\gerenkesan\MCU_KaFa\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 ctrboard\3rrs.o: G:\gerenkesan\MCU_KaFa\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 ctrboard\3rrs.o: G:\gerenkesan\MCU_KaFa\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
-ctrboard\3rrs.o: 3RRS\3RRS.h
+ctrboard\3rrs.o: ..\Core\3RRS\3RRS.h
 ctrboard\3rrs.o: ../Core/Inc/main.h
 ctrboard\3rrs.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h
 ctrboard\3rrs.o: ../Core/Inc/stm32h7xx_hal_conf.h

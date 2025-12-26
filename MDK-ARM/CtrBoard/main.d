@@ -45,4 +45,4 @@ ctrboard\main.o: ../User/bsp_fdcan.h
 ctrboard\main.o: ../User/dm_motor_ctrl.h
 ctrboard\main.o: ../User/dm_motor_drv.h
 ctrboard\main.o: G:\gerenkesan\MCU_KaFa\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
-ctrboard\main.o: .\3RRS\3RRS.h
+ctrboard\main.o: ..\Core\3RRS\3RRS.h
