@@ -42,7 +42,7 @@
 
 #define THETA0_RAD       0.0    /* 初始角：主动件水平（theta=0 对应水平沿 +u_i） */
 
-#define THETA_MIN_DEG   (-60.0) /* 主动角下限（deg） */
+#define THETA_MIN_DEG   ( 0.0) /* 主动角下限（deg） */
 #define THETA_MAX_DEG   ( 60.0) /* 主动角上限（deg） */
 
 #define DEG2RAD(d) ((d) * (M_PI / 180.0))
@@ -89,30 +89,46 @@ static Vec3 rotate_no_yaw(Vec3 p_local, double X_roll, double Y_pitch){
 }
 
 /* 解 Fi*sinθ + Gi*cosθ = Hi 的两解；不可达返回 false */
-static bool solve_trig_linear(double Fi, double Gi, double Hi, double sol[2]){
-    double disc = Fi*Fi + Gi*Gi - Hi*Hi;
-    if(disc < -1e-10) return false;
-    if(disc < 0) disc = 0;
+static bool solve_trig_linear(double F, double G, double H, double sol[2]){
+    double R = sqrt(F*F + G*G);
+    if(R < 1e-12) return false;
 
-    double sdisc = sqrt(disc);
-    double denom = (Hi - Gi);
+    double s = H / R;
+    if(s < -1.0) s = -1.0;
+    if(s >  1.0) s =  1.0;
 
-    if(fabs(denom) < EPS){
-        /* 备用解法（避免半角分母病态） */
-        double R = sqrt(Fi*Fi + Gi*Gi);
-        if(R < EPS) return false;
-        double phi = atan2(Gi, Fi);
-        double s = clamp(Hi / R, -1.0, 1.0);
-        double a = asin(s);
-        sol[0] = wrap_pi(a - phi);
-        sol[1] = wrap_pi((M_PI - a) - phi);
-        return true;
-    }
+    double alpha = atan2(G, F);
+    double a = asin(s);
 
-    sol[0] = wrap_pi(2.0 * atan2((Fi + sdisc), denom));
-    sol[1] = wrap_pi(2.0 * atan2((Fi - sdisc), denom));
+    sol[0] = wrap_pi(a - alpha);
+    sol[1] = wrap_pi((M_PI - a) - alpha);
     return true;
 }
+
+//static bool solve_trig_linear(double Fi, double Gi, double Hi, double sol[2]){
+//    double disc = Fi*Fi + Gi*Gi - Hi*Hi;
+//    if(disc < -1e-10) return false;
+//    if(disc < 0) disc = 0;
+
+//    double sdisc = sqrt(disc);
+//    double denom = (Hi - Gi);
+
+//    if(fabs(denom) < EPS){
+//        /* 备用解法（避免半角分母病态） */
+//        double R = sqrt(Fi*Fi + Gi*Gi);
+//        if(R < EPS) return false;
+//        double phi = atan2(Gi, Fi);
+//        double s = clamp(Hi / R, -1.0, 1.0);
+//        double a = asin(s);
+//        sol[0] = wrap_pi(a - phi);
+//        sol[1] = wrap_pi((M_PI - a) - phi);
+//        return true;
+//    }
+
+//    sol[0] = wrap_pi(2.0 * atan2((Fi + sdisc), denom));
+//    sol[1] = wrap_pi(2.0 * atan2((Fi - sdisc), denom));
+//    return true;
+//}
 
 /* 构造等边分布点：A1 在 +x；C1 在 +x' */
 static void build_geometry(Vec3 A[3], Vec3 C_local[3]){

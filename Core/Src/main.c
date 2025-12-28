@@ -121,11 +121,15 @@ int main(void)
   enable_motor_mode(&hfdcan1, 0x03, POS_MODE);
   enable_motor_mode(&hfdcan1, 0x04, POS_MODE);
   enable_motor_mode(&hfdcan1, 0x05, POS_MODE);
-	save_pos_zero(&hfdcan1,motor[Motor1].id,POS_MODE);
-	save_pos_zero(&hfdcan1,motor[Motor2].id,POS_MODE);
-	save_pos_zero(&hfdcan1,motor[Motor3].id,POS_MODE);
+//	save_pos_zero(&hfdcan1,motor[Motor1].id,POS_MODE);
+//	save_pos_zero(&hfdcan1,motor[Motor2].id,POS_MODE);
+//	save_pos_zero(&hfdcan1,motor[Motor3].id,POS_MODE);
 	
   HAL_Delay(1000);
+//		 pos_ctrl(&hfdcan1, motor[0].id, 0.1,1);
+//     pos_ctrl(&hfdcan1, motor[1].id, 0.1,1);
+//     pos_ctrl(&hfdcan1, motor[2].id, 0.1,1);
+
   HAL_TIM_Base_Start_IT(&htim3);
   //	read_all_motor_data(&motor[Motor1]);
 
@@ -134,14 +138,42 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	double theta_out[3];
+	ik_3rrs_no_yaw(0.12,0,0,NULL,theta_out);
+	pos_ctrl(&hfdcan1, motor[0].id, -theta_out[0],3);
+  pos_ctrl(&hfdcan1, motor[1].id, -theta_out[1],3);
+  pos_ctrl(&hfdcan1, motor[2].id, -theta_out[2],3);
+	HAL_Delay(1000);
+	
   while (1)
   {
-		for (int i=0;i<15;i++)
+		for (int i=0;i<300;i++)
 		{
-			ik_3rrs_no_yaw(0.0866,i,0,NULL,theta_out);
+			unsigned char x=0;
+			//x=ik_3rrs_no_yaw(0.09+((double)(i))/10000,0,0,NULL,theta_out);
+			//x=ik_3rrs_no_yaw(0.12,(30-((double)i/(5)))/180,0.03,NULL,theta_out);
+			x=ik_3rrs_no_yaw(0.12,0,(30-((double)i/(5)))/180,NULL,theta_out);
+			pos_ctrl(&hfdcan1, motor[0].id, -theta_out[0],3);
+      pos_ctrl(&hfdcan1, motor[1].id, -theta_out[1],3);
+      pos_ctrl(&hfdcan1, motor[2].id, -theta_out[2],3);
 			
-			printf("%2f,%2f,%2f\r\n",theta_out[0],theta_out[1],theta_out[2]);
+			printf("%2f,%2f,%2f,%d,%d,%f,%f,%f\r\n",theta_out[0],theta_out[1],theta_out[2],i,x,motor[0].para.pos, motor[Motor2].para.pos, motor[Motor3].para.pos);
+			
+			HAL_Delay(2);
 		}
+		for (int i=300;i>0;i--)
+		{
+			unsigned char x=0;
+			//x=ik_3rrs_no_yaw(0.09+((double)(i))/10000,0,0,NULL,theta_out);
+			//x=ik_3rrs_no_yaw(0.12,(30-((double)i/(5)))/180,0.03,NULL,theta_out);
+			x=ik_3rrs_no_yaw(0.12,0,(30-((double)i/(5)))/180,NULL,theta_out);
+			pos_ctrl(&hfdcan1, motor[0].id, -theta_out[0],3);
+      pos_ctrl(&hfdcan1, motor[1].id, -theta_out[1],3);
+      pos_ctrl(&hfdcan1, motor[2].id, -theta_out[2],3);
+			
+			printf("%2f,%2f,%2f,%d,%d,%f,%f,%f\r\n",theta_out[0],theta_out[1],theta_out[2],i,x,motor[0].para.pos, motor[Motor2].para.pos, motor[Motor3].para.pos);
+			HAL_Delay(2);
+		}
+		
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
